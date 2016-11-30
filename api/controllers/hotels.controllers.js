@@ -128,29 +128,46 @@ module.exports.hotelsGetOne = function(req, res){
         });
 };
 
-module.exports.hotelsAddOne = function(req, res){
-    var db = dbconn.get();
-    var collection = db.collection('hotels');
-    var newHotel;
-    
-    if(req.body && req.body.name && req.body.stars){
-        newHotel = req.body;
-        newHotel.stars = parseInt(req.body.stars, 10);
-        collection.insertOne(newHotel,function(err, resp){
-            if(err){
-                console.log(err);
-                return;
-            }
-            console.log(resp.ops);
-            res
-                .status(201)
-                .json( resp.ops );
-        });
-        
+var _splitArray = function(input){
+    var output;
+    if(input && input.length > 0){
+        output = input.split(";");
     } else {
-        console.log('data missing from body');
-        res
-            .status(400)
-            .json( {message: "required data missing from body"} );
+        output = [];
     }
+    return output;
+};
+
+module.exports.hotelsAddOne = function(req, res){
+    var newHotel = {
+        name : req.body.name,
+        description : req.body.description,
+        stars : parseInt(req.body.stars, 10),
+        services : _splitArray(req.body.services),
+        photos : _splitArray(req.body.photos),
+        location : {
+            address : req.body.address,
+            coordinates : [
+                parseFloat(req.body.lng), 
+                parseFloat(req.body.lat)
+            ]
+        }
+    };
+    
+    Hotel
+        .create(newHotel, function(err, hotel){
+            var response = {
+                status : 201,
+                message : {}
+            };
+            if(err){
+                response.status = 500;
+                response.message = err;
+            } else {
+                response.message = hotel;
+            }
+            res
+                .status(response.status)
+                .json(response.message);
+        });
 };
