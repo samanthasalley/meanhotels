@@ -52,8 +52,8 @@ var runGeoQuery = function(req, res){
 module.exports.hotelsGetAll = function(req, res){
     
     var offset = 0;
-    var count = 6;
-    var maxCount = 10;
+    var count = 15;
+    var maxCount = 15;
     
     if(req.query && req.query.lat && req.query.lng){
         runGeoQuery(req,res);
@@ -145,6 +145,7 @@ module.exports.hotelsAddOne = function(req, res){
         stars : parseInt(req.body.stars, 10),
         services : _splitArray(req.body.services),
         photos : _splitArray(req.body.photos),
+        currency : req.body.currency,
         location : {
             address : req.body.address,
             coordinates : [
@@ -169,5 +170,77 @@ module.exports.hotelsAddOne = function(req, res){
             res
                 .status(response.status)
                 .json(response.message);
+        });
+};
+
+module.exports.hotelsUpdateOne = function(req, res){
+    var hotelId = req.params.hotelId;
+    console.log('GET hotelId', hotelId);
+    
+    Hotel
+        .findById(hotelId)
+        .select("-reviews -rooms")
+        .exec(function(err, hotel){
+            var response = {
+                status : 200,
+                message : hotel
+            };
+            if(err){
+                response.status = 500;
+                response.message = err;
+            } else if(!hotel){
+                response.status = 404;
+                response.message = "Hotel ID not found";
+            }
+            if(response.status !== 200){
+                res
+                    .status(response.status)
+                    .json(response.message);
+            } else {
+                hotel.name = req.body.name;
+                hotel.description = req.body.description;
+                hotel.stars = parseInt(req.body.stars, 10);
+                hotel.services = _splitArray(req.body.services);
+                hotel.photos = _splitArray(req.body.photos);
+                hotel.currency = req.body.currency;
+                hotel.location = {
+                    address : req.body.address,
+                    coordinates : [
+                        parseFloat(req.body.lng), 
+                        parseFloat(req.body.lat)
+                    ]
+                };
+                
+                hotel.save(function(err, hotelUpdate){
+                    if(err){
+                        res
+                            .status(500)
+                            .json(err);
+                    }else{
+                        res
+                            .status(204)
+                            .json();
+                    }
+                });
+            }
+        });
+};
+
+module.exports.hotelsDeleteOne = function(req, res){
+    var hotelId = req.params.hotelId;
+    
+    Hotel
+        .findByIdAndRemove(hotelId)
+        .exec(function(err, deletedHotel){
+            if(err){
+                res
+                    .status(404)
+                    .json(err);
+            }else{
+                console.log('Hotel deleted, id: ', hotelId);
+                res
+                    .status(204)
+                    .json();
+            }
         });
 };

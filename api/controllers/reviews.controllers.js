@@ -135,3 +135,117 @@ module.exports.reviewsAddOne = function(req, res){
             }
         });
 };
+
+module.exports.reviewsUpdateOne = function(req, res){
+    var hotelId = req.params.hotelId;
+    var reviewId = req.params.reviewId;
+    
+    Hotel
+        .findById(hotelId)
+        .select('reviews')
+        .exec(function(err, hotel){
+            var response = {
+                status : 200,
+                message : {}
+            };
+            if(err){
+                console.log('error');
+                response.status = 500;
+                response.message = err;
+            } else if(!hotel){
+                console.log('Hotel not found');
+                response.status = 404;
+                response.message = {
+                    "message" : "Could not find hotel id: " + hotelId
+                };
+            } else {
+                var review = hotel.reviews.id(reviewId);
+                if(!review){
+                    console.log('Review not found');
+                    response.status = 404;
+                    response.message = {
+                        "message" : "Review " + reviewId + " not found for hotel " + hotelId
+                    };
+                } else {
+                    response.message = review;
+                }
+            }
+            if(response.status !== 200){
+                res
+                    .status(response.status)
+                    .json(response.message);
+            }else{
+                review.name = req.body.name;
+                review.rating = parseInt(req.body.rating, 10);
+                review.review = req.body.review;
+                
+                hotel.save(function(err, reviewUpdate){
+                    if(err){
+                        res
+                            .status(500)
+                            .json(err);
+                    }else{
+                        res
+                            .status(204)
+                            .json();
+                    }
+                });
+            }
+        });
+};
+
+module.exports.reviewsDeleteOne = function(req, res){
+    var hotelId = req.params.hotelId;
+    var reviewId = req.params.reviewId;
+    
+    Hotel
+        .findById(hotelId)
+        .select('reviews')
+        .exec(function(err, hotel){
+            var response = {
+                status : 200,
+                message : {}
+            };
+            if(err){
+                console.log('error');
+                response.status = 500;
+                response.message = err;
+            } else if(!hotel){
+                console.log('Hotel not found');
+                response.status = 404;
+                response.message = {
+                    "message" : "Could not find hotel id: " + hotelId
+                };
+            } else {
+                var review = hotel.reviews.id(reviewId);
+                if(!review){
+                    console.log('Review not found');
+                    response.status = 404;
+                    response.message = {
+                        "message" : "Review " + reviewId + " not found for hotel " + hotelId
+                    };
+                } else {
+                    response.message = review;
+                }
+            }
+            if(response.status !== 200){
+                res
+                    .status(response.status)
+                    .json(response.message);
+            }else{
+                hotel.reviews.id(reviewId).remove();
+                hotel.save(function(err, removedReview){
+                    if(err){
+                        res
+                            .status(500)
+                            .json(err);
+                    }else{
+                        console.log('Deleted review, id: ', reviewId);
+                        res
+                            .status(204)
+                            .json();
+                    }
+                });
+            }
+        });
+};
