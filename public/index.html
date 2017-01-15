@@ -1,26 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="meanhotel">
 <head>
     <title>MEAN Demo</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
     <link rel="stylesheet" href="css/custom.css" type="text/css" />
 </head>
 <body>
+    <mh-navigation></mh-navigation>
     
-    <h1>MEAN Demo Homepage</h1>
+    <div id="content" class="container">
+        <div ng-view></div>
+    </div>
     
     <footer class="footer">
         <div class="container">
             <p class="text-muted text-center">
-                <a href="www.facebook.com" target="_blank"><img src="https://images.unsplash.com/photo-1469042363927-a95686d2b78e?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&s=1d264acdffd30c9bf917dab800bbf886" height="86" alt="Facebook" /></a>
-            </p>
-            
-            <p class="text-muted text-center">
-                <small>&copy; 2016 MEAN Stack Demo</small>
+                <small>&copy; 2016 MEAN Hotels - Samantha Salley</small>
             </p>
         </div>
     </footer>
     
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="node_modules/angular/angular.js"></script>
+    <script type="text/javascript" src="node_modules/angular-route/angular-route.js"></script>
+    <script type="text/javascript" src="node_modules/angular-jwt/dist/angular-jwt.js"></script>
+    <script type="text/javascript" src="angular-app/app.js"></script>
+    <script type="text/javascript" src="angular-app/hotel-list/hotel-list-controller.js"></script>
+    <script type="text/javascript" src="angular-app/hotel-display/hotel-display-controller.js"></script>
+    <script type="text/javascript" src="angular-app/hotel-data-factory/hotel-data-factory.js"></script>
+    <script type="text/javascript" src="angular-app/hotel-rating/hotel-rating-directive.js"></script>
+    <script type="text/javascript" src="angular-app/register/register-controller.js"></script>
+    <script type="text/javascript" src="angular-app/navigation-directive/navigation-directive.js"></script>
+    <script type="text/javascript" src="angular-app/login/login-controller.js"></script>
+    <script type="text/javascript" src="angular-app/auth/auth-factory.js"></script>
+    <script type="text/javascript" src="angular-app/auth/auth-interceptor.js"></script>
 </body>
 </html>

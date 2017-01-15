@@ -1,7 +1,8 @@
 var express     = require("express"),
     router      = express.Router(),
     ctrlHotels  = require("../controllers/hotels.controllers.js"),
-    ctrlReviews  = require("../controllers/reviews.controllers.js");
+    ctrlReviews  = require("../controllers/reviews.controllers.js"),
+    ctrlUsers   = require("../controllers/users.controllers.js");
     
 router
     .route('/hotels')
@@ -17,12 +18,21 @@ router
 router
     .route('/hotels/:hotelId/reviews')
     .get(ctrlReviews.reviewsGetAll)
-    .post(ctrlReviews.reviewsAddOne);
+    .post(ctrlUsers.authenticate, ctrlReviews.reviewsAddOne);
     
 router
     .route('/hotels/:hotelId/reviews/:reviewId')
     .get(ctrlReviews.reviewsGetOne)
     .put(ctrlReviews.reviewsUpdateOne)
     .delete(ctrlReviews.reviewsDeleteOne);
+    
+// Add Authentication Routes
+router
+    .route('/users/register')
+    .post(ctrlUsers.register);
+    
+router
+    .route('/users/login')
+    .post(ctrlUsers.login);
     
 module.exports = router;
