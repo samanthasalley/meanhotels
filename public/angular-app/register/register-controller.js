@@ -1,6 +1,6 @@
 angular.module('meanhotel').controller('RegisterController', RegisterController);
 
-function RegisterController($http){
+function RegisterController(userDataFactory){
     var vm = this;
     vm.register = function(){
         var user = {
@@ -14,10 +14,12 @@ function RegisterController($http){
             if(vm.password !== vm.passwordRepeat){
                 vm.error = 'Please make sure the passwords match.';
             }else{
-                $http.post('/api/users/register', user).then(function(result){
-                    console.log(result);
-                    vm.message = 'Successful registration, please login.';
-                    vm.error = '';
+                userDataFactory.registerUser(user).then(function(response){
+                    console.log(response.status);
+                    if(response.status === 201){
+                        vm.message = 'Successful registration, please login.';
+                        vm.error = '';
+                    }
                 }).catch(function(err){
                     console.log(err);
                     vm.error = 'There was an error.';

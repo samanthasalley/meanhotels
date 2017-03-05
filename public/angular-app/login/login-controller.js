@@ -1,10 +1,12 @@
 angular.module('meanhotel').controller('LoginController', LoginController);
 
-function LoginController($http, $location, $window, AuthFactory, jwtHelper){
+function LoginController(userDataFactory, $location, $window, AuthFactory, jwtHelper){
     var vm = this;
     
     vm.isLoggedIn = function(){
         if(AuthFactory.isLoggedIn){
+            var token = jwtHelper.decodeToken($window.sessionStorage.token);
+            vm.loggedinUser = token.username;
             return true;
         }else{
             return false;
@@ -18,7 +20,7 @@ function LoginController($http, $location, $window, AuthFactory, jwtHelper){
                 password: vm.password
             };
             
-            $http.post('/api/users/login', user).then(function(response){
+            userDataFactory.loginUser(user).then(function(response){
                 if(response.data.success){
                     $window.sessionStorage.token = response.data.token;
                     AuthFactory.isLoggedIn = true;
