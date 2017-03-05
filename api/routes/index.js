@@ -35,4 +35,8 @@ router
     .route('/users/login')
     .post(ctrlUsers.login);
     
+router
+    .route('/users/update')
+    .post(ctrlUsers.updatePassword);
+    
 module.exports = router;

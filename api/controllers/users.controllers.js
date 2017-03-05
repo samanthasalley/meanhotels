@@ -49,6 +49,43 @@ module.exports.login = function(req, res) {
     });
 };
 
+module.exports.updatePassword = function(req, res) {
+    console.log('logging in user');
+    var curUser = {};
+        curUser.username = req.body.username;
+        curUser.password = req.body.currentPassword;
+        
+    var newPassword = req.body.newPassword;
+        
+    User.findOne({
+        username: curUser.username
+    }).exec(function(err, user){
+        if(err){
+            console.log(err);
+            res.status(400).json(err);
+        }else{
+            if(bcrypt.compareSync(curUser.password, user.password)){
+                console.log('user found!', user);
+                user.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10));
+                user.save(function(err, updatedUser){
+                    if(err){
+                        res
+                            .status(500)
+                            .json(err);
+                    }else{
+                        var token = jwt.sign({ username: updatedUser.username }, 's3cr3t', { expiresIn: 3600 });
+                        res
+                            .status(204)
+                            .json({ success: true, token: token });
+                    }
+                });
+            }else{
+                res.status(401).json('Unauthorized');
+            }
+        }
+    });
+};
+
 // Middleware to check for and validate jwt token
 module.exports.authenticate = function(req, res, next){
     var headerExists = req.headers.authorization;
