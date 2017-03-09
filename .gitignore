@@ -1,4 +1,2 @@
-mongod
 nodemon.json
-data
 public/angular-app/config.js
