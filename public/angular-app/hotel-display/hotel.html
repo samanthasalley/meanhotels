@@ -9,6 +9,16 @@
     <li ng-repeat="service in vm.hotel.services">{{ service }}</li>
 </ul>
 
+<h3>Map</h3>
+<div>
+    <iframe
+      width="300"
+      height="225"
+      frameborder="0" style="border:0"
+      ng-src="{{ vm.mapSRC | trustedSrcFilter }}" allowfullscreen>
+    </iframe>
+</div>
+
 <h3>Reviews</h3>
 <ul>
     <li ng-repeat="review in vm.hotel.reviews"><strong>{{ review.name }}</strong> says: <strong>{{ review.review }}</strong></li>
